@@ -1,0 +1,7 @@
+.cache
+.classpath
+.project
+.settings/
+/bin
+/libs/scala_library.min.jar
+/proguard_cache/
