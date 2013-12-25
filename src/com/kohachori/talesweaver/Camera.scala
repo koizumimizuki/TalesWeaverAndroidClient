@@ -24,8 +24,9 @@ object Camera {
     val bottom = cameraY + surfaceY
     val top = cameraY
     GLU.gluOrtho2D(gl, left, right, bottom, top)
-    gl.glMatrixMode(GL10.GL_MODELVIEW)
-    gl.glLoadIdentity
-    gl.glDisable(GL10.GL_DEPTH_TEST)
+    // 無くても動くので、予期しない挙動を防ぐために一応コメントアウト
+    //    gl.glMatrixMode(GL10.GL_MODELVIEW)
+    //    gl.glLoadIdentity
+    //    gl.glDisable(GL10.GL_DEPTH_TEST)
   }
 }

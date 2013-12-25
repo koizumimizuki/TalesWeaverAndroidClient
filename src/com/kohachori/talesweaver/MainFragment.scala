@@ -24,10 +24,12 @@ class MainFragment extends Fragment {
     mGLView.setRenderer(new MainRenderer(getActivity()))
     mGLView.setOnTouchListener(new OnTouchListener() {
       override def onTouch(v: View, ev: MotionEvent): Boolean = {
-        GameManager.onTouch(ev)
+        MotionManager.onTouch(ev)
         true
       }
     })
+    GameManager.context = getActivity().getApplicationContext()
+    GameManager.soundManager
     mGLView
   }
 }

@@ -8,8 +8,10 @@ import scala.math._
 import scala.util.Random
 //ベクトルの定義
 
-case class Enemy(x: Int, y: Int, goalX: Int, goalY: Int, speed: Int, hp: Int, time: Int) extends Drawable {
-  def changeGoal(goalX: Int, goalY: Int): Enemy = Enemy(this.x, this.y, goalX, goalY, this.speed, this.hp, this.time)
+case class Enemy(id: Int, x: Int, y: Int, goalX: Int, goalY: Int, speed: Int, hp: Int, time: Int) extends Drawable {
+  def exists = 0 < hp
+  val radius = 64
+  def changeGoal(goalX: Int, goalY: Int): Enemy = Enemy(id = this.id, x = this.x, y = this.y, goalX = goalX, goalY = goalY, speed = this.speed, hp = this.hp, time = this.time)
   def update(): Enemy = {
     val updatedX = if (x == goalX) x else if (x < goalX) x + speed else x - speed
     val updatedY = if (y == goalY) y else if (y < goalY) y + speed else y - speed
@@ -17,9 +19,16 @@ case class Enemy(x: Int, y: Int, goalX: Int, goalY: Int, speed: Int, hp: Int, ti
     val updatedGoalX = if (time % 60 == 0) goalX + new java.util.Random().nextInt(100) * random else goalX
     val updatedGoalY = if (time % 60 == 0) goalY + new java.util.Random().nextInt(100) * random else goalY
     val updatedTime = time + 1
-    Enemy(updatedX, updatedY, updatedGoalX, updatedGoalY, this.speed, this.hp, updatedTime)
+    Enemy(this.id, updatedX, updatedY, updatedGoalX, updatedGoalY, this.speed, this.hp, updatedTime)
   }
-  def attacked(damage: Int) = Enemy(this.x, this.y, this.goalX, this.goalY, this.speed, this.hp - damage, this.time)
+  def attacked(damage: Int) = Enemy(id = this.id, x = this.x, y = this.y, goalX = this.goalX, goalY = this.goalY, speed = this.speed, hp = this.hp - damage, time = this.time)
+  def isThereEnemyAtTouchedAsix(x: Int, y: Int) = {
+    val a = this.x - this.radius < x
+    val b = x < this.y + this.radius
+    val c = this.y - this.radius < y
+    val d = y < this.y + this.radius
+    a && b && c && d
+  }
   override def draw(gl: GL10) {
     object Config {
       val ChipWidth = 128 // GLViewに表示するwidth幅

@@ -242,6 +242,19 @@ public class GraphicUtil {
 		drawCircle(gl, center.mX, center.mY, divides, radius, r, g, b, a);
 	}
 
+	/**
+	 * x,yは円の中心座標
+	 * 
+	 * @param gl
+	 * @param x
+	 * @param y
+	 * @param divides
+	 * @param radius
+	 * @param r
+	 * @param g
+	 * @param b
+	 * @param a
+	 */
 	public static final void drawCircle(GL10 gl, float x, float y, int divides,
 			float radius, float r, float g, float b, float a) {
 		float[] vertices = getVertices(divides * 3 * 2);
