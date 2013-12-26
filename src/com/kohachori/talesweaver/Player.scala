@@ -38,6 +38,8 @@ case class Player(x: Int, y: Int, goalX: Int, goalY: Int, speed: Int, normalMoti
     else Player(this.x, this.y, goalX, goalY, this.speed, this.normalMotionFrameRemain, this.skillMotionFrameRemain, this.normalBeforeDelayRemain, this.normalAfterDelayRemain, this.skillBeforDelayRemain, this.skillAfterDelayRemain, this.enemyOpt)
 
   def update(): Player = {
+    DebugOverlay.log("==========Player==========")
+    DebugOverlay.log(s"x:$x,y:$y,goalX:$goalX,goalY:$goalY")
     def decrementIfMoreThan(frame: Int) = if (0 < frame) frame - 1 else frame
     val updatedNormalAfterDelayRemain = decrementIfMoreThan(normalAfterDelayRemain)
     val updatedMotionFrameRemain: Int =

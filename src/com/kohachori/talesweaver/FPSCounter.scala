@@ -10,13 +10,15 @@ object FPSCounter {
   var framerate: Float = _
 
   def update() {
-    Log.d("", s"$framerate")
     count += 1
     val now = System.currentTimeMillis()
     if (now - basetime >= 1000) {
-      framerate = (count * 1000) / (now - basetime)
+      framerate = (count * 1000).toFloat / (now - basetime).toFloat
       basetime = now
       count = 0
     }
+  }
+  def draw() {
+    DebugOverlay.log(s"FPS:$framerate")
   }
 }

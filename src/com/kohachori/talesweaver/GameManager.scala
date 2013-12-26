@@ -8,10 +8,11 @@ import android.media.SoundPool
 import android.media.AudioManager
 import android.content.Context
 import android.util.Log
+import android.app.Fragment
 
 object GameManager {
-  var context: Context = _
-  lazy val soundManager = new SoundManager(context)
+  var fragment: MainFragment = _
+  lazy val soundManager = new SoundManager(fragment.getActivity())
   var mapTexture: Int = _
   var playerTexture: Int = _
   var zerripiTexture: Int = _

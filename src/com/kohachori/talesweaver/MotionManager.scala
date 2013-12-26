@@ -10,7 +10,7 @@ case class Move(x: Int, y: Int) extends Action
 case class Attack(x: Int, y: Int) extends Action
 case class InvokeSkill(x: Int, y: Int) extends Action
 object MotionManager {
-  
+
   def onTouch(event: MotionEvent) {
     val worldX = event.getX.toInt + Camera.cameraX
     val worldY = event.getY.toInt + Camera.cameraY
@@ -35,7 +35,7 @@ object MotionManager {
         else NoneMove()
       case _ => NoneMove()
     }
-//    if (action.toString == "NoneMove" == false && action.isInstanceOf[Move] == false) Log.d("", action.toString())
+    //    if (action.toString == "NoneMove" == false && action.isInstanceOf[Move] == false) Log.d("", action.toString())
     action match {
       case Attack(x, y) =>
         GameManager.enemies.filter(_.isThereEnemyAtTouchedAsix(x, y)).headOption.foreach { enemy =>

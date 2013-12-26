@@ -25,13 +25,14 @@ class MainRenderer(context: Context) extends Renderer {
   }
 
   override def onDrawFrame(gl: GL10) {
-    //    FPSCounter.update()
     gl.glClearColor(0.0f, 0.0f, 0.0f, 1.0f)
     gl.glClear(GL10.GL_COLOR_BUFFER_BIT)
     Camera.update()
     Camera.draw(gl)
     GameManager.update()
     GameManager.draw(gl)
+    FPSCounter.update()
+    FPSCounter.draw()
   }
 
 }

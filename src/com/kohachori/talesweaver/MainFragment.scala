@@ -10,26 +10,46 @@ import android.view.View.OnHoverListener
 import android.view.View.OnTouchListener
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams
+import android.widget.FrameLayout
+import android.content.Context
+import android.widget.TextView
+import com.kohachori.talesweaver.Implicits._
+import scala.util.Properties
+import android.graphics.Color
 
 class MainFragment extends Fragment {
 
-  private lazy val mGLView: GLSurfaceView = new GLSurfaceView(getActivity())
+  implicit class MyViewGroup(viewGroup: ViewGroup) {
+    def withView(view: View) = {
+      viewGroup.addView(view)
+      viewGroup
+    }
+  }
+
+  lazy val mTextView = new TextView(getActivity())
+
+  override def onCreate(savedInstanceState: Bundle) {
+    super.onCreate(savedInstanceState)
+    GameManager.fragment = this
+    GameManager.soundManager
+  }
 
   override def onCreateView(inflater: LayoutInflater, container: ViewGroup,
     savedInstanceState: Bundle) = {
-    mGLView.setDebugFlags(GLSurfaceView.DEBUG_CHECK_GL_ERROR)
-    mGLView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
-    mGLView.setEGLContextClientVersion(1)
-    mGLView.setPreserveEGLContextOnPause(true)
-    mGLView.setRenderer(new MainRenderer(getActivity()))
-    mGLView.setOnTouchListener(new OnTouchListener() {
+    val glView = new GLSurfaceView(getActivity())
+    glView.setDebugFlags(GLSurfaceView.DEBUG_CHECK_GL_ERROR)
+    glView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
+    glView.setEGLContextClientVersion(1)
+    glView.setPreserveEGLContextOnPause(true)
+    glView.setRenderer(new MainRenderer(getActivity()))
+    glView.setOnTouchListener(new OnTouchListener() {
       override def onTouch(v: View, ev: MotionEvent): Boolean = {
         MotionManager.onTouch(ev)
         true
       }
     })
-    GameManager.context = getActivity().getApplicationContext()
-    GameManager.soundManager
-    mGLView
+    mTextView.setTextColor(Color.WHITE)
+    new FrameLayout(getActivity()).withView(glView).withView(mTextView)
   }
+  def log(log: Array[String]) = getActivity().runOnUiThread(mTextView.setText(Properties.lineSeparator + log.reverse.mkString(Properties.lineSeparator)))
 }
