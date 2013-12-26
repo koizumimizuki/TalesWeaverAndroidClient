@@ -80,7 +80,8 @@ case class Player(x: Int, y: Int, goalX: Int, goalY: Int, speed: Int,
       else if (0 < normalAfterDelayRemain) bar(normalAfterDelayRemain, Player.NormalAfterDelay)
       else "|"
     val skillDelaybar: String =
-      if (0 < skillBeforeDelayRemain) reverseBar(skillBeforeDelayRemain, Player.SkillBeforeDelay)
+      if (0 < skillMotionFrameRemain) bar(1, 1)
+      else if (0 < skillBeforeDelayRemain) reverseBar(skillBeforeDelayRemain, Player.SkillBeforeDelay)
       else if (0 < skillAfterDelayRemain) bar(skillAfterDelayRemain, Player.SkillAfterDelay)
       else "|"
     DebugOverlay.log(motionBar)
