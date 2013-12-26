@@ -36,7 +36,7 @@ case class Player(x: Int, y: Int, goalX: Int, goalY: Int, speed: Int,
   }
 
   def changeGoal(goalX: Int, goalY: Int) =
-    if (0 < normalMotionFrameRemain || 0 < skillMotionFrameRemain || 0 < skillAfterDelayRemain) this
+    if (0 < normalMotionFrameRemain || 0 < skillMotionFrameRemain || 0 < skillBeforeDelayRemain) this
     else Player(this.x, this.y, goalX, goalY, this.speed,
       this.normalMotionFrameRemain, this.skillMotionFrameRemain,
       this.normalBeforeDelayRemain, this.normalAfterDelayRemain,
