@@ -20,7 +20,7 @@ case class Player(x: Int, y: Int, goalX: Int, goalY: Int, speed: Int,
   case class AttackEnemy extends Move
 
   //TODO 通常攻撃コンボ受付時間の実装漏れ
-  def canNormalAttack = normalMotionFrameRemain == 0 && skillMotionFrameRemain == 0 // スキル詠唱中も無理だよね
+  def canNormalAttack = normalMotionFrameRemain == 0 && skillBeforeDelayRemain == 0 && skillMotionFrameRemain == 0
   def canSkillAttack =
     (normalMotionFrameRemain == 0 && skillMotionFrameRemain == 0 && skillAfterDelayRemain == 0 && skillBeforeDelayRemain == 0) ||
       (0 < normalMotionFrameRemain && 0 < normalAfterDelayRemain && skillBeforeDelayRemain == 0)
