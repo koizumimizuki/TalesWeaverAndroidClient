@@ -23,7 +23,7 @@ object Skill {
   val rightVolume = 1
   val loop = 0
   val rate = 1
-  val soundRate = 0.8
+  val soundRate = 0.3
 }
 case class Normal(time: Int = 0) extends Skill {
   val id = GameManager.soundManager.slashSound
@@ -34,7 +34,7 @@ case class Normal(time: Int = 0) extends Skill {
 }
 case class SkillRen(time: Int = 0) extends Skill {
   val id = GameManager.soundManager.slashSound
-  val times = Array(0, 1, 2).map(_ * 10)
+  val times = Array(0, 20, 30, 40, 60, 75).map(_.toFloat * Skill.soundRate).map(_.toInt)
   override def update: SkillRen = SkillRen(time + 1)
   override def sound() = times.filter(_ == time).headOption.map(_.toInt).foreach(play)
   def play(priority: Int) = GameManager.soundManager.sound.play(id, Skill.leftVolume, Skill.rightVolume, priority, Skill.loop, Skill.rate)

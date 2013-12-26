@@ -11,7 +11,7 @@ import android.util.Log
 case class Player(x: Int, y: Int, goalX: Int, goalY: Int, speed: Int,
   normalMotionFrameRemain: Int, skillMotionFrameRemain: Int,
   normalBeforeDelayRemain: Int, normalAfterDelayRemain: Int,
-  skillBeforeDelayRemain: Int, skillAfterDelayRemain: Int, enemyOpt: Option[Enemy]) extends Drawable {
+  skillBeforDelayRemain: Int, skillAfterDelayRemain: Int, enemyOpt: Option[Enemy]) extends Drawable {
 
   sealed class Move
   case class ShouldRunFullSpeed extends Move
@@ -20,27 +20,27 @@ case class Player(x: Int, y: Int, goalX: Int, goalY: Int, speed: Int,
   case class AttackEnemy extends Move
 
   //TODO 通常攻撃コンボ受付時間の実装漏れ
-  def canNormalAttack = skillMotionFrameRemain == 0
-  def canSkillAttack = skillMotionFrameRemain == 0 && skillAfterDelayRemain == 0 || 0 < normalAfterDelayRemain
+  def canNormalAttack = skillMotionFrameRemain == 0 && normalAfterDelayRemain == 0
+  def canSkillAttack = skillMotionFrameRemain == 0 && skillAfterDelayRemain == 0
   def normalAttack(enemy: Enemy) =
     Player(x = this.x, y = this.y, goalX = this.goalX, goalY = this.goalY, speed = this.speed,
       normalMotionFrameRemain = this.normalMotionFrameRemain, skillMotionFrameRemain = this.skillMotionFrameRemain,
       normalBeforeDelayRemain = Player.NormalBeforeDelay, normalAfterDelayRemain = this.normalAfterDelayRemain,
-      skillBeforeDelayRemain = this.skillBeforeDelayRemain, skillAfterDelayRemain = this.skillAfterDelayRemain, Some(enemy))
+      skillBeforDelayRemain = this.skillBeforDelayRemain, skillAfterDelayRemain = this.skillAfterDelayRemain, Some(enemy))
   def skillAttack(enemy: Enemy) = {
     GameManager.skills = GameManager.skills.+:(BeforeSkillRen(0))
     Player(x = this.x, y = this.y, goalX = this.goalX, goalY = this.goalY, speed = this.speed,
       normalMotionFrameRemain = this.normalMotionFrameRemain, skillMotionFrameRemain = this.skillMotionFrameRemain,
       normalBeforeDelayRemain = this.normalBeforeDelayRemain, normalAfterDelayRemain = this.normalAfterDelayRemain,
-      skillBeforeDelayRemain = Player.SkillBeforeDelay, skillAfterDelayRemain = this.skillAfterDelayRemain, Some(enemy))
+      skillBeforDelayRemain = Player.SkillBeforeDelay, skillAfterDelayRemain = this.skillAfterDelayRemain, Some(enemy))
   }
 
   def changeGoal(goalX: Int, goalY: Int) =
-    if (0 < normalMotionFrameRemain || 0 < skillMotionFrameRemain || 0 < skillAfterDelayRemain) this
+    if (0 < skillMotionFrameRemain || 0 < skillBeforDelayRemain) this
     else Player(this.x, this.y, goalX, goalY, this.speed,
       this.normalMotionFrameRemain, this.skillMotionFrameRemain,
       this.normalBeforeDelayRemain, this.normalAfterDelayRemain,
-      this.skillBeforeDelayRemain, this.skillAfterDelayRemain, this.enemyOpt)
+      this.skillBeforDelayRemain, this.skillAfterDelayRemain, this.enemyOpt)
 
   def update(): Player = {
     DebugOverlay.log("==========Player==========")
@@ -49,56 +49,22 @@ case class Player(x: Int, y: Int, goalX: Int, goalY: Int, speed: Int,
     DebugOverlay.log(s"skillMotionFrameRemain:$skillMotionFrameRemain")
     DebugOverlay.log(s"normalBeforeDelayRemain:$normalBeforeDelayRemain")
     DebugOverlay.log(s"normalAfterDelayRemain:$normalAfterDelayRemain")
-    DebugOverlay.log(s"skillBeforeDelayRemain:$skillBeforeDelayRemain")
+    DebugOverlay.log(s"skillBeforDelayRemain:$skillBeforDelayRemain")
     DebugOverlay.log(s"skillAfterDelayRemain:$skillAfterDelayRemain")
-    def bar(denominator: Float, numerator: Float): String = Array.fill((30 * (denominator / numerator)).toInt)("|").mkString
-    def reverseBar(denominator: Float, numerator: Float): String = {
-      val a: Float = 1.0f - skillBeforeDelayRemain.toFloat / Player.SkillBeforeDelay.toFloat
-      val barLength =
-        if (a == 1.0f) 1
-        else (30 * a).toInt
-      Array.fill(barLength)("|").mkString
-    }
-    val normalMotionBar = bar(normalMotionFrameRemain, Player.NormalMotionFrame)
-    val skillMotionFrameRemainBar = bar(skillMotionFrameRemain, Player.SkillMotionFrame)
-    val normalBeforeDelayRemainBar = bar(normalBeforeDelayRemain, Player.NormalBeforeDelay)
-    val normalAfterDelayRemainBar = bar(normalAfterDelayRemain, Player.NormalAfterDelay)
-    val skillBeforeDelayRemainBar = bar(skillBeforeDelayRemain, Player.SkillBeforeDelay)
-    val skillAfterDelayRemainBar = bar(skillAfterDelayRemain, Player.SkillAfterDelay)
-    DebugOverlay.log(s"normalMotionFrameRemain:$normalMotionBar")
-    DebugOverlay.log(s"skillMotionFrameRemain:$skillMotionFrameRemainBar")
-    DebugOverlay.log(s"normalBeforeDelayRemain:$normalBeforeDelayRemainBar")
-    DebugOverlay.log(s"normalAfterDelayRemain:$normalAfterDelayRemainBar")
-    DebugOverlay.log(s"skillBeforeDelayRemain:$skillBeforeDelayRemainBar")
-    DebugOverlay.log(s"skillAfterDelayRemain:$skillAfterDelayRemainBar")
-    val motionBar: String =
-      if (0 < normalMotionFrameRemain) bar(normalMotionFrameRemain, Player.NormalMotionFrame)
-      else if (0 < skillMotionFrameRemain) bar(skillMotionFrameRemain, Player.SkillMotionFrame)
-      else "|"
-    val normalDelaybar: String =
-      if (0 < normalBeforeDelayRemain) reverseBar(normalBeforeDelayRemain, Player.NormalBeforeDelay)
-      else if (0 < normalAfterDelayRemain) bar(normalAfterDelayRemain, Player.NormalAfterDelay)
-      else "|"
-    val skillDelaybar: String =
-      if (0 < skillBeforeDelayRemain) reverseBar(skillBeforeDelayRemain, Player.SkillBeforeDelay)
-      else if (0 < skillAfterDelayRemain) bar(skillAfterDelayRemain, Player.SkillAfterDelay)
-      else "|"
-    DebugOverlay.log(motionBar)
-    DebugOverlay.log(normalDelaybar)
-    DebugOverlay.log(skillDelaybar)
     def decrementIfMoreThan(frame: Int) = if (0 < frame) frame - 1 else frame
     val updatedNormalMotionFrameRemain: Int =
-      if (this.normalBeforeDelayRemain == 1) {
+      if (normalMotionFrameRemain == 1) {
         enemyOpt.map { enemy =>
           GameManager.skills = GameManager.skills.+:(Normal())
           GameManager.enemies.filter(_.id == enemy.id).headOption.map(_.attacked(1)).foreach { enemy =>
             GameManager.enemies = GameManager.enemies.filterNot(_.id == enemy.id).+:(enemy)
           }
         }
-        Player.NormalMotionFrame
-      } else decrementIfMoreThan(this.normalMotionFrameRemain)
+        decrementIfMoreThan(skillMotionFrameRemain)
+      } else decrementIfMoreThan(skillMotionFrameRemain)
+    println(updatedNormalMotionFrameRemain)
     val updatedSkillMotionFrameRemain: Int =
-      if (skillBeforeDelayRemain == 1) {
+      if (skillBeforDelayRemain == 1) {
         enemyOpt.map { enemy =>
           GameManager.skills = GameManager.skills.+:(SkillRen())
           GameManager.enemies.filter(_.id == enemy.id).headOption.map(_.attacked(5)).foreach { enemy =>
@@ -111,14 +77,14 @@ case class Player(x: Int, y: Int, goalX: Int, goalY: Int, speed: Int,
     val updatedNormalAfterDelayRemain =
       if (normalBeforeDelayRemain == 1) Player.NormalAfterDelay
       else decrementIfMoreThan(normalAfterDelayRemain)
-    val updatedSkillBeforDelayRemain = decrementIfMoreThan(skillBeforeDelayRemain)
+    val updatedSkillBeforDelayRemain = decrementIfMoreThan(skillBeforDelayRemain)
     val updatedSkillAfterDelayRemain =
       if (skillMotionFrameRemain == 1) Player.SkillAfterDelay
       else decrementIfMoreThan(skillAfterDelayRemain)
     val state = {
       val betweenGoalXAndThisXDistance = abs(goalX - x)
       val betweenGoalYAndThisYDistance = abs(goalY - y)
-      if (betweenGoalXAndThisXDistance == 0 && betweenGoalYAndThisYDistance == 0 || 0 < normalMotionFrameRemain || 0 < skillMotionFrameRemain) ShouldNotMove
+      if (betweenGoalXAndThisXDistance == 0 && betweenGoalYAndThisYDistance == 0 || 0 < skillMotionFrameRemain || 0 < skillBeforDelayRemain) ShouldNotMove
       else if (betweenGoalXAndThisXDistance < speed && betweenGoalYAndThisYDistance < speed) ShouldNotRunFullSpeed
       else ShouldRunFullSpeed
     }
@@ -126,12 +92,12 @@ case class Player(x: Int, y: Int, goalX: Int, goalY: Int, speed: Int,
       case ShouldNotRunFullSpeed => Player(this.goalX, this.goalY, this.goalX, this.goalY, this.speed,
         normalMotionFrameRemain = updatedNormalMotionFrameRemain, skillMotionFrameRemain = updatedSkillMotionFrameRemain,
         normalBeforeDelayRemain = updatedNormalBeforeDelayRemain, normalAfterDelayRemain = updatedNormalAfterDelayRemain,
-        skillBeforeDelayRemain = updatedSkillBeforDelayRemain, skillAfterDelayRemain = updatedSkillAfterDelayRemain,
+        skillBeforDelayRemain = updatedSkillBeforDelayRemain, skillAfterDelayRemain = updatedSkillAfterDelayRemain,
         this.enemyOpt)
       case ShouldNotMove => Player(this.x, this.y, this.goalX, this.goalY, this.speed,
         normalMotionFrameRemain = updatedNormalMotionFrameRemain, skillMotionFrameRemain = updatedSkillMotionFrameRemain,
         normalBeforeDelayRemain = updatedNormalBeforeDelayRemain, normalAfterDelayRemain = updatedNormalAfterDelayRemain,
-        skillBeforeDelayRemain = updatedSkillBeforDelayRemain, skillAfterDelayRemain = updatedSkillAfterDelayRemain,
+        skillBeforDelayRemain = updatedSkillBeforDelayRemain, skillAfterDelayRemain = updatedSkillAfterDelayRemain,
         this.enemyOpt)
       case ShouldRunFullSpeed => {
         val vector = new Vector2D(this.goalX - this.x, this.goalY - this.y).unitVector()
@@ -140,7 +106,7 @@ case class Player(x: Int, y: Int, goalX: Int, goalY: Int, speed: Int,
         Player(updatedX.toInt, updatedY.toInt, this.goalX, this.goalY, this.speed,
           normalMotionFrameRemain = updatedNormalMotionFrameRemain, skillMotionFrameRemain = updatedSkillMotionFrameRemain,
           normalBeforeDelayRemain = updatedNormalBeforeDelayRemain, normalAfterDelayRemain = updatedNormalAfterDelayRemain,
-          skillBeforeDelayRemain = updatedSkillBeforDelayRemain, skillAfterDelayRemain = updatedSkillAfterDelayRemain,
+          skillBeforDelayRemain = updatedSkillBeforDelayRemain, skillAfterDelayRemain = updatedSkillAfterDelayRemain,
           this.enemyOpt)
       }
     }
@@ -167,3 +133,5 @@ object Player {
   val SkillBeforeDelay = 60
   val SkillAfterDelay = 100
 }
+
+ 

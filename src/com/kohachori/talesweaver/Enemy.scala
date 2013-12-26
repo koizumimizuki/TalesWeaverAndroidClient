@@ -13,11 +13,14 @@ case class Enemy(id: Int, x: Int, y: Int, goalX: Int, goalY: Int, speed: Int, hp
   val radius = 64
   def changeGoal(goalX: Int, goalY: Int): Enemy = Enemy(id = this.id, x = this.x, y = this.y, goalX = goalX, goalY = goalY, speed = this.speed, hp = this.hp, time = this.time)
   def update(): Enemy = {
+    DebugOverlay.log("==========Enemy==========")
+    DebugOverlay.log(s"x:$x,y:$y,GoalX:$goalX,GoalY:$goalY")
+    DebugOverlay.log(s"HP:$hp,time:$time")
     val updatedX = if (x == goalX) x else if (x < goalX) x + speed else x - speed
     val updatedY = if (y == goalY) y else if (y < goalY) y + speed else y - speed
     val random = if (Random.nextBoolean) 1 else -1
-    val updatedGoalX = if (time % 60 == 0) goalX + new java.util.Random().nextInt(100) * random else goalX
-    val updatedGoalY = if (time % 60 == 0) goalY + new java.util.Random().nextInt(100) * random else goalY
+    val updatedGoalX = if (time % 60 == 0) goalX + new java.util.Random().nextInt(30) * random else goalX
+    val updatedGoalY = if (time % 60 == 0) goalY + new java.util.Random().nextInt(30) * random else goalY
     val updatedTime = time + 1
     Enemy(this.id, updatedX, updatedY, updatedGoalX, updatedGoalY, this.speed, this.hp, updatedTime)
   }

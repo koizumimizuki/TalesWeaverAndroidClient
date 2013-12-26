@@ -16,7 +16,7 @@ object GameManager {
   var mapTexture: Int = _
   var playerTexture: Int = _
   var zerripiTexture: Int = _
-  var player = Player(x = 500, y = 1000, goalX = 500, goalY = 1000, speed = 15, normalMotionFrameRemain = 0, skillMotionFrameRemain = 0, normalBeforeDelayRemain = 0, normalAfterDelayRemain = 0, skillBeforDelayRemain = 0, skillAfterDelayRemain = 0, enemyOpt = None)
+  var player = Player(x = 500, y = 1000, goalX = 500, goalY = 1000, speed = 15, normalMotionFrameRemain = 0, skillMotionFrameRemain = 0, normalBeforeDelayRemain = 0, normalAfterDelayRemain = 0, skillBeforeDelayRemain = 0, skillAfterDelayRemain = 0, enemyOpt = None)
   var enemies: Array[Enemy] = (0 to 0).map(id => Enemy(id = id, x = 300, y = 600, goalX = 300, goalY = 600, speed = 1, hp = 1000, time = 0)).toArray
   var skills = Array.empty[Skill]
   def run() {

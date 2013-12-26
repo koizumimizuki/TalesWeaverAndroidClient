@@ -15,6 +15,11 @@ object MotionManager {
     val worldX = event.getX.toInt + Camera.cameraX
     val worldY = event.getY.toInt + Camera.cameraY
     val action: Action = MotionEventCompat.getActionMasked(event) match {
+      case MotionEvent.ACTION_MOVE => MotionEventCompat.getPointerCount(event) match {
+        case 1 => GameManager.enemies.filter(_.isThereEnemyAtTouchedAsix(worldX, worldY))
+          .headOption.map(_ => Attack(worldX, worldY)).getOrElse(Move(worldX, worldY))
+        case _ => NoneMove()
+      }
       case MotionEvent.ACTION_POINTER_DOWN | MotionEvent.ACTION_DOWN => MotionEventCompat.getPointerCount(event) match {
         case 1 => GameManager.enemies.filter(_.isThereEnemyAtTouchedAsix(worldX, worldY))
           .headOption.map(_ => Attack(worldX, worldY)).getOrElse(Move(worldX, worldY))
