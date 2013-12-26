@@ -27,8 +27,8 @@ case class Enemy(id: Int, x: Int, y: Int, goalX: Int, goalY: Int, speed: Int, hp
   def attacked(damage: Int) = Enemy(id = this.id, x = this.x, y = this.y, goalX = this.goalX, goalY = this.goalY, speed = this.speed, hp = this.hp - damage, time = this.time)
   def isThereEnemyAtTouchedAsix(x: Int, y: Int) = {
     val a = this.x - this.radius < x
-    val b = x < this.y + this.radius
     val c = this.y - this.radius < y
+    val b = x < this.y + this.radius
     val d = y < this.y + this.radius
     a && b && c && d
   }

@@ -17,7 +17,10 @@ object MotionManager {
     val action: Action = MotionEventCompat.getActionMasked(event) match {
       case MotionEvent.ACTION_MOVE => MotionEventCompat.getPointerCount(event) match {
         case 1 => GameManager.enemies.filter(_.isThereEnemyAtTouchedAsix(worldX, worldY))
-          .headOption.map(_ => Attack(worldX, worldY)).getOrElse(Move(worldX, worldY))
+          .headOption.map { _ =>
+            if (GameManager.player.canNormalAttack) Attack(worldX, worldY)
+            else NoneMove()
+          }.getOrElse(Move(worldX, worldY))
         case _ => NoneMove()
       }
       case MotionEvent.ACTION_POINTER_DOWN | MotionEvent.ACTION_DOWN => MotionEventCompat.getPointerCount(event) match {
@@ -31,7 +34,10 @@ object MotionManager {
           val centerX = ((x0 + x1) / 2).toInt + Camera.cameraX
           val centerY = ((y0 + y1) / 2).toInt + Camera.cameraY
           GameManager.enemies.filter(_.isThereEnemyAtTouchedAsix(centerX, centerY))
-            .headOption.map(_ => InvokeSkill(centerX, centerY)).getOrElse(NoneMove())
+            .headOption.map { _ =>
+              if (GameManager.player.canSkillAttack) InvokeSkill(centerX, centerY)
+              else NoneMove()
+            }.getOrElse(NoneMove())
         }
         case _ => NoneMove()
       }

@@ -20,8 +20,10 @@ case class Player(x: Int, y: Int, goalX: Int, goalY: Int, speed: Int,
   case class AttackEnemy extends Move
 
   //TODO 通常攻撃コンボ受付時間の実装漏れ
-  def canNormalAttack = skillMotionFrameRemain == 0
-  def canSkillAttack = skillMotionFrameRemain == 0 && skillAfterDelayRemain == 0 || 0 < normalAfterDelayRemain
+  def canNormalAttack = normalMotionFrameRemain == 0 && skillMotionFrameRemain == 0 // スキル詠唱中も無理だよね
+  def canSkillAttack =
+    (normalMotionFrameRemain == 0 && skillMotionFrameRemain == 0 && skillAfterDelayRemain == 0 && skillBeforeDelayRemain == 0) ||
+      (0 < normalMotionFrameRemain && 0 < normalAfterDelayRemain && skillBeforeDelayRemain == 0)
   def normalAttack(enemy: Enemy) =
     Player(x = this.x, y = this.y, goalX = this.goalX, goalY = this.goalY, speed = this.speed,
       normalMotionFrameRemain = this.normalMotionFrameRemain, skillMotionFrameRemain = this.skillMotionFrameRemain,
@@ -30,8 +32,8 @@ case class Player(x: Int, y: Int, goalX: Int, goalY: Int, speed: Int,
   def skillAttack(enemy: Enemy) = {
     GameManager.skills = GameManager.skills.+:(BeforeSkillRen(0))
     Player(x = this.x, y = this.y, goalX = this.goalX, goalY = this.goalY, speed = this.speed,
-      normalMotionFrameRemain = this.normalMotionFrameRemain, skillMotionFrameRemain = this.skillMotionFrameRemain,
-      normalBeforeDelayRemain = this.normalBeforeDelayRemain, normalAfterDelayRemain = this.normalAfterDelayRemain,
+      normalMotionFrameRemain = 0, skillMotionFrameRemain = this.skillMotionFrameRemain,
+      normalBeforeDelayRemain = 0, normalAfterDelayRemain = this.normalAfterDelayRemain,
       skillBeforeDelayRemain = Player.SkillBeforeDelay, skillAfterDelayRemain = this.skillAfterDelayRemain, Some(enemy))
   }
 
@@ -161,10 +163,10 @@ case class Player(x: Int, y: Int, goalX: Int, goalY: Int, speed: Int,
 }
 object Player {
   val Radius = 100
-  val NormalMotionFrame = 40
+  val NormalMotionFrame = 20
   val SkillMotionFrame = 30
   val NormalBeforeDelay = 1
   val NormalAfterDelay = 60
-  val SkillBeforeDelay = 60
-  val SkillAfterDelay = 100
+  val SkillBeforeDelay = 40
+  val SkillAfterDelay = 90
 }
